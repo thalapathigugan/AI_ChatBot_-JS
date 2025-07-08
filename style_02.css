@@ -64,20 +64,23 @@ main {
   align-items: center;
   display: flex;
   position: absolute;
-  top: 10px;
+  top: 50%;
   right: 20px;
-  padding: 0 ;
+  transform: translateY(-50%);
+  padding: 0;
   border-radius: 50%;
 }
 
 @media (max-width: 900px) {
   #theme-switcher {
-    top: 2px !important;
+    top: 50% !important;
     right: 10px !important;
+    transform: translateY(-50%) !important;
   }
   #clear-conversation {
-    top: 2px;
-    left: 10px;
+    top: 50%;
+    right: 60px;
+    transform: translateY(-50%);
     width: 40px;
     height: 40px;
   }
@@ -104,10 +107,11 @@ main {
 
 #clear-conversation {
   position: absolute;
-  top: 10px;
-  left: 20px;
-  width: 36px;
-  height: 36px;
+  top: 50%;
+  right: 80px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
   justify-content: center;
   align-items: center;
   display: flex;
@@ -120,10 +124,7 @@ main {
   transition: all 0.3s ease;
 }
 
-#clear-conversation:hover {
-  background: var(--secondary-color);
-  transform: scale(1.1);
-}
+
 
 
 .chat-header {
@@ -134,11 +135,12 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: sticky;
+  position: relative;
   top: 0;
   z-index: 10;
   background: var(--primary-color);
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  min-height: 60px;
 }
 
 .chat-header h1 {
@@ -221,6 +223,26 @@ main {
   color: var(--text-color);
   border-radius: 13px 13px 0 13px;
   padding: 10px;
+}
+
+/* List styling for bot messages */
+.chat-body .bot-message .message-text ul,
+.chat-body .bot-message .message-text ol {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.chat-body .bot-message .message-text li {
+  margin: 4px 0;
+  line-height: 1.4;
+}
+
+.chat-body .bot-message .message-text ul li {
+  list-style-type: disc;
+}
+
+.chat-body .bot-message .message-text ol li {
+  list-style-type: decimal;
 }
 
 .chat-body .user-message .attachment {
@@ -432,14 +454,16 @@ main {
   #theme-switcher {
     width: 32px;
     height: 32px;
-    top: 4px;
+    top: 50%;
     right: 4px;
+    transform: translateY(-50%);
   }
   #clear-conversation {
     width: 28px;
     height: 28px;
-    top: 4px;
-    left: 4px;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
   }
   .chat-body {
     padding-top: 44px;

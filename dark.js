@@ -13,7 +13,7 @@ class VectorStore {
     constructor() {
         this.messages = [];
         this.maxContextLength = 4000; // Maximum context length in characters
-        this.maxRecentMessages = 5; // Always include recent messages
+        this.maxRecentMessages = 10; // Always include recent messages
         this.similarityThreshold = 0.3; // Minimum similarity score
     }
 
@@ -177,7 +177,7 @@ class VectorStore {
 const vectorStore = new VectorStore();
 vectorStore.loadFromStorage();
 
-let chatbotName = "Gwen";
+let chatbotName = "Mikasa";
 const CHATBOT_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 1024 1024">
                 <path d="M738.3 287.6H285.7c-59 0-106.8 47.8-106.8 106.8v303.1c0 59 47.8 106.8 106.8 106.8h81.5v111.1c0 .7.8 1.1 1.4.7l166.9-110.6 41.8-.8h117.4l43.6-.4c59 0 106.8-47.8 106.8-106.8V394.5c0-59-47.8-106.9-106.8-106.9zM351.7 448.2c0-29.5 23.9-53.5 53.5-53.5s53.5 23.9 53.5 53.5-23.9 53.5-53.5 53.5-53.5-23.9-53.5-53.5zm157.9 267.1c-67.8 0-123.8-47.5-132.3-109h264.6c-8.6 61.5-64.5 109-132.3 109zm110-213.7c-29.5 0-53.5-23.9-53.5-53.5s23.9-53.5 53.5-53.5 53.5 23.9 53.5 53.5-23.9 53.5-53.5 53.5zM867.2 644.5V453.1h26.5c19.4 0 35.1 15.7 35.1 35.1v121.1c0 19.4-15.7 35.1-35.1 35.1h-26.5zM95.2 609.4V488.2c0-19.4 15.7-35.1 35.1-35.1h26.5v191.3h-26.5c-19.4 0-35.1-15.7-35.1-35.1zM561.5 149.6c0 23.4-15.6 43.3-36.9 49.7v44.9h-30v-44.9c-21.4-6.5-36.9-26.3-36.9-49.7 0-28.6 23.3-51.9 51.9-51.9s51.9 23.3 51.9 51.9z"></path>
             </svg>`;
@@ -197,10 +197,91 @@ const userData = {
     }
 };
 
+// Function to format AI responses with proper list formatting
+const formatResponseWithLists = (text) => {
+    // Split text into lines
+    const lines = text.split('\n');
+    let formattedLines = [];
+    let inList = false;
+    let listType = null;
+    let listItems = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        // Check for numbered list (1., 2., etc.)
+        const numberedMatch = line.match(/^(\d+)\.\s+(.+)$/);
+        // Check for bullet points (-, *, •)
+        const bulletMatch = line.match(/^[-*•]\s+(.+)$/);
+        
+        if (numberedMatch) {
+            // Start or continue numbered list
+            if (!inList || listType !== 'numbered') {
+                if (inList) {
+                    // Close previous list
+                    formattedLines.push(formatList(listItems, listType));
+                    listItems = [];
+                }
+                inList = true;
+                listType = 'numbered';
+            }
+            listItems.push(numberedMatch[2]);
+        } else if (bulletMatch) {
+            // Start or continue bullet list
+            if (!inList || listType !== 'bullet') {
+                if (inList) {
+                    // Close previous list
+                    formattedLines.push(formatList(listItems, listType));
+                    listItems = [];
+                }
+                inList = true;
+                listType = 'bullet';
+            }
+            listItems.push(bulletMatch[1]);
+        } else {
+            // Regular text line
+            if (inList) {
+                // Close current list
+                formattedLines.push(formatList(listItems, listType));
+                listItems = [];
+                inList = false;
+                listType = null;
+            }
+            // Escape HTML and preserve line breaks
+            formattedLines.push(line.replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+        }
+    }
+    
+    // Close any remaining list
+    if (inList) {
+        formattedLines.push(formatList(listItems, listType));
+    }
+    
+    return formattedLines.join('<br>');
+};
+
+// Helper function to format lists
+const formatList = (items, type) => {
+    if (type === 'numbered') {
+        return `<ol>${items.map(item => `<li>${item.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</li>`).join('')}</ol>`;
+    } else {
+        return `<ul>${items.map(item => `<li>${item.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</li>`).join('')}</ul>`;
+    }
+};
+
 const generateBotResponse = async (incomingMessageDiv) => {
     const messageElement = incomingMessageDiv.querySelector(".message-text");
 
-    const systemPrompt = `You are ${chatbotName}, a highly intelligent, friendly AI assistant.`;
+    const systemPrompt = `
+You are ${chatbotName}, a highly intelligent,  a friendly female AI assistant. Use she/her pronouns and speak in a warm, empathetic tone.
+reply in English.
+If the user starts the conversation in Tamil or asks to speak in Tamil, reply fully in Tamil words (written in English letters) for fun and local flavor.
+Use a casual, conversational tone.
+Examples of Tamil words to mix: "seri", "sapadu", "enna", "romba", "aama", "illa", "semma", "dai", "da", "machan".
+Otherwise, reply in English.
+If the user switches language, adapt your response accordingly.
+`;
+
     
     // Get intelligent context using vector store
     const relevantContext = vectorStore.getRelevantContext(userData.message);
@@ -234,10 +315,12 @@ const generateBotResponse = async (incomingMessageDiv) => {
         }
 
         const apiResponseText = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text
-            ? data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim()
+            ? data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").replace(/<[^>]*>/g, "").trim()
             : "Sorry, I couldn't process your request.";
 
-        messageElement.innerText = apiResponseText;
+        // Format the response for proper list display
+        const formattedResponse = formatResponseWithLists(apiResponseText);
+        messageElement.innerHTML = formattedResponse;
         
         // Add bot response to vector store
         vectorStore.addMessage('bot', apiResponseText);
@@ -393,9 +476,10 @@ const displayConversationHistory = () => {
                 const userMessageDiv = createMessageElement(messageContent, "user-message");
                 chatBody.appendChild(userMessageDiv);
             } else if (msg.role === 'bot') {
+                const formattedBotMessage = formatResponseWithLists(msg.content);
                 const botMessageContent = `<div class="message bot-message">
                     ${CHATBOT_ICON_SVG}
-                    <div class="message-text">${msg.content}</div>`;
+                    <div class="message-text">${formattedBotMessage}</div>`;
                 const botMessageDiv = createMessageElement(botMessageContent, "bot-message");
                 chatBody.appendChild(botMessageDiv);
             }
