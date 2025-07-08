@@ -70,6 +70,19 @@ main {
   border-radius: 50%;
 }
 
+@media (max-width: 900px) {
+  #theme-switcher {
+    top: 2px !important;
+    right: 10px !important;
+  }
+  #clear-conversation {
+    top: 2px;
+    left: 10px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
 #theme-switcher button {
   color: var(--primary-color);
   cursor: pointer;
@@ -87,6 +100,29 @@ main {
 
 .dark-mode #theme-switcher button:last-child{
   display: block;
+}
+
+#clear-conversation {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--primary-color);
+  cursor: pointer;
+  border: none;
+  background: var(--background-color);
+  transition: all 0.3s ease;
+}
+
+#clear-conversation:hover {
+  background: var(--secondary-color);
+  transform: scale(1.1);
 }
 
 
@@ -398,6 +434,12 @@ main {
     height: 32px;
     top: 4px;
     right: 4px;
+  }
+  #clear-conversation {
+    width: 28px;
+    height: 28px;
+    top: 4px;
+    left: 4px;
   }
   .chat-body {
     padding-top: 44px;
