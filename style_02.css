@@ -145,6 +145,10 @@ main {
 
 .chat-header h1 {
   color: var(--text-color);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
   margin: 0; /* Remove default margins */
 }
 
@@ -158,6 +162,10 @@ main {
   border-radius: 50%;
 }
 
+.chat-header h1 span{
+  font-size: 1.5rem;
+  font-weight: 600;
+}
 
 
 
