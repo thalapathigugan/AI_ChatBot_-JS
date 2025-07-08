@@ -53,6 +53,8 @@ main {
   background: var(--background-color);
   border-radius: 13px;
   display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
   box-shadow: -5px 5px 10px 12px rgba(123, 18, 179, 0.164);
 }
@@ -175,6 +177,7 @@ main {
   padding: 26px 22px;
   overflow-y: auto;
   flex-grow: 1;
+  width: 90%;
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color) transparent;
   padding-top: 60px;
@@ -305,7 +308,7 @@ main {
 }
 
 .chat-footer {
-  width: 100%;
+  width: 90%;
   padding: 15px 22px 20px;
   /* position: absolute;  Removed */
   /* bottom: 0;  Removed */
