@@ -126,6 +126,29 @@ main {
   transition: all 0.3s ease;
 }
 
+#new-chat {
+  position: absolute;
+  top: 50%;
+  right: 120px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--primary-color);
+  cursor: pointer;
+  border: none;
+  background: var(--background-color);
+  transition: all 0.3s ease;
+}
+
+#new-chat:hover {
+  background: var(--secondary-color);
+}
+
 
 
 

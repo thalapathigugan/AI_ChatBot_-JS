@@ -7,6 +7,7 @@ const sendMessageButton = document.querySelector('#send-message');
 const fileInput = document.querySelector('#file-input');
 const fileUploadWrapper = document.querySelector('.file-upload-wapper');
 const fileCancelButton = document.querySelector('#file-cancel');
+const newChatButton = document.querySelector('#new-chat');
 
 // Vector Store for Long Conversations
 class VectorStore {
@@ -505,4 +506,19 @@ if (clearConversationButton) {
 sendMessageButton.addEventListener("click", (e) => handleOutgoingMessage(e));
 if(document.querySelector('#file-upload')){
     document.querySelector('#file-upload').addEventListener('click', () => fileInput.click());
+}
+
+if (newChatButton) {
+    newChatButton.addEventListener('click', () => {
+        chatBody.innerHTML = '';
+        // Optionally, add a welcome or new chat message
+        const newChatMsg = document.createElement('div');
+        newChatMsg.className = 'message bot-message';
+        newChatMsg.innerHTML = `
+            ${CHATBOT_ICON_SVG}
+            <div class="message-text">New chat started. How can I help you?</div>
+        `;
+        chatBody.appendChild(newChatMsg);
+        chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: "smooth" });
+    });
 }
